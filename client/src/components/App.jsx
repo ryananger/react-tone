@@ -5,7 +5,8 @@ import Song from './Song.jsx';
 import init from '../init.js';
 import instruments from '../instruments.js';
 
-import getProgression from '../getProgression.js';
+import methods from '../helpers/getProgression.js';
+import nameGen from '../helpers/nameGen.js';
 
 var App = function(props) {
   const [state, setState] = React.useState({
@@ -37,8 +38,26 @@ var App = function(props) {
     piano: init.loadInstrument('piano')
   });
 
-  var newSong = function(first) {
-    var song = <Song progression={{verse: getProgression(first), chorus: getProgression(first), bridge: getProgression(first)}}/>;
+  var newSong = function() {
+    var first = methods.first();
+
+    var info = {
+      name: nameGen(),
+      tempo: Math.floor(Math.random() * 120) + 60,
+      songKey: state.allNotes[Math.floor(Math.random() * state.allNotes.length)].note,
+      rhythms: {
+        verse: state.rhythms[Math.floor(Math.random() * state.rhythms.length)],
+        chorus: state.rhythms[Math.floor(Math.random() * state.rhythms.length)],
+        bridge: state.rhythms[Math.floor(Math.random() * state.rhythms.length)]
+      },
+      progression: {
+        verse: methods.getProgression(first),
+        chorus: methods.getProgression(first),
+        bridge: methods.getProgression(first)
+      }
+    }
+
+    var song = <Song key={info.name + state.songs.length} info={info}/>;
 
     setState({
       ...state,

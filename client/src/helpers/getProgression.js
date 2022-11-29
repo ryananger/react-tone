@@ -36,6 +36,12 @@ inputs.sort(function(a, b) {
   return a - b;
 });
 
+var start = [];
+
+for (var i = 0; i < inputs.length; i++) {
+  start.push(inputs[i][0]);
+}
+
 // this first counts the occurrences of a chord after the current chord in the input array...
 var nextProb = {c1: [], c2: [], c3: [], c4: [], c5: [], c6: [], c7: []};
 
@@ -102,9 +108,8 @@ var getNext = function(chord) {
 
 // Pulls a random root chord from inputs and then completes progression with getNext.
 var getProgression = function(first) {
-  var progression = '';
+  var progression = first;
   var progLength = 4;
-  progression += first;
 
   while (progression.length < progLength) {
     var cur = progression[progression.length - 1];
@@ -114,4 +119,11 @@ var getProgression = function(first) {
   return progression;
 }
 
-export default getProgression;
+var methods = {
+  getProgression: getProgression,
+  first: function() {
+    return start[Math.floor(Math.random() * start.length)];
+  }
+}
+
+export default methods;

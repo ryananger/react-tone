@@ -426,11 +426,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Song_jsx__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Song.jsx */ "./client/src/components/Song.jsx");
 /* harmony import */ var _init_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../init.js */ "./client/src/init.js");
 /* harmony import */ var _instruments_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../instruments.js */ "./client/src/instruments.js");
-/* harmony import */ var _getProgression_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../getProgression.js */ "./client/src/getProgression.js");
+/* harmony import */ var _helpers_getProgression_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helpers/getProgression.js */ "./client/src/helpers/getProgression.js");
+/* harmony import */ var _helpers_nameGen_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helpers/nameGen.js */ "./client/src/helpers/nameGen.js");
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 
 
 
@@ -459,13 +461,26 @@ var App = function App(props) {
     _React$useState2 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_React$useState, 2),
     state = _React$useState2[0],
     setState = _React$useState2[1];
-  var newSong = function newSong(first) {
-    var song = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement(_Song_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  var newSong = function newSong() {
+    var first = _helpers_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"].first();
+    var info = {
+      name: (0,_helpers_nameGen_js__WEBPACK_IMPORTED_MODULE_8__["default"])(),
+      tempo: Math.floor(Math.random() * 120) + 60,
+      songKey: state.allNotes[Math.floor(Math.random() * state.allNotes.length)].note,
+      rhythms: {
+        verse: state.rhythms[Math.floor(Math.random() * state.rhythms.length)],
+        chorus: state.rhythms[Math.floor(Math.random() * state.rhythms.length)],
+        bridge: state.rhythms[Math.floor(Math.random() * state.rhythms.length)]
+      },
       progression: {
-        verse: (0,_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"])(first),
-        chorus: (0,_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"])(first),
-        bridge: (0,_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"])(first)
+        verse: _helpers_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"].getProgression(first),
+        chorus: _helpers_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"].getProgression(first),
+        bridge: _helpers_getProgression_js__WEBPACK_IMPORTED_MODULE_7__["default"].getProgression(first)
       }
+    };
+    var song = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement(_Song_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      key: info.name + state.songs.length,
+      info: info
     });
     setState(_objectSpread(_objectSpread({}, state), {}, {
       currentSong: song,
@@ -512,10 +527,10 @@ var Song = function Song(props) {
 
 /***/ }),
 
-/***/ "./client/src/getProgression.js":
-/*!**************************************!*\
-  !*** ./client/src/getProgression.js ***!
-  \**************************************/
+/***/ "./client/src/helpers/getProgression.js":
+/*!**********************************************!*\
+  !*** ./client/src/helpers/getProgression.js ***!
+  \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -530,6 +545,10 @@ var inputs = ['1256', '1415', '2615', '2525', '1564', '6511', '5611', '1514', '6
 inputs.sort(function (a, b) {
   return a - b;
 });
+var start = [];
+for (var i = 0; i < inputs.length; i++) {
+  start.push(inputs[i][0]);
+}
 
 // this first counts the occurrences of a chord after the current chord in the input array...
 var nextProb = {
@@ -599,16 +618,79 @@ var getNext = function getNext(chord) {
 
 // Pulls a random root chord from inputs and then completes progression with getNext.
 var getProgression = function getProgression(first) {
-  var progression = '';
+  var progression = first;
   var progLength = 4;
-  progression += first;
   while (progression.length < progLength) {
     var cur = progression[progression.length - 1];
     progression += getNext('c' + cur);
   }
   return progression;
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getProgression);
+var methods = {
+  getProgression: getProgression,
+  first: function first() {
+    return start[Math.floor(Math.random() * start.length)];
+  }
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (methods);
+
+/***/ }),
+
+/***/ "./client/src/helpers/nameGen.js":
+/*!***************************************!*\
+  !*** ./client/src/helpers/nameGen.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var nStr = 'baker.barker.race car driver.rhino.cop.robber.banker.child.king.queen.garbage man.angel.devil.deeds.actor.gold.painting.advertisement.grass.parrot.afternoon.pencil.airport.guitar.piano.ambulance.muskrat.giraffe.bandana.alpaca.bird.fur.yarn.book.cardboard.bike.candle.oil.food.crochet hook.pen.pencil.fork.spoon.knife.mancala.television.modem.package.cloth.claw.clone.spindle';
+var aStr = 'adorable.adventurous.aggressive.agreeable.alert.alive.amused.angry.annoyed.annoying.anxious.arrogant.ashamed.attractive.average.awful.bad.beautiful.better.bewildered.black.bloody.blue.blue-eyed.blushing.bored.brainy.brave.breakable.bright.busy.calm.careful.cautious.charming.cheerful.clean.clear.clever.cloudy.clumsy.colorful.combative.comfortable.concerned.condemned.confused.cooperative.courageous.crazy.creepy.crowded.cruel.curious.cute.dangerous.dark.dead.defeated.defiant.delightful.depressed.determined.different.difficult.disgusted.distinct.disturbed.dizzy.doubtful.drab.dull.eager.easy.elated.elegant.embarrassed.enchanting.encouraging.energetic.enthusiastic.envious.evil.excited.expensive.exuberant.fair.faithful.famous.fancy.fantastic.fierce.filthy.fine.foolish.fragile.frail.frantic.friendly.frightened.funny.gentle.gifted.glamorous.gleaming.glorious.good.gorgeous.graceful.grieving.grotesque.grumpy.handsome.happy.healthy.helpful.helpless.hilarious.homeless.homely.horrible.hungry.hurt.ill.important.impossible.inexpensive.innocent.inquisitive.itchy.jealous.jittery.jolly.joyous.kind.lazy.light.lively.lonely.long.lovely.lucky.magnificent.misty.modern.motionless.muddy.mushy.mysterious.nasty.naughty.nervous.nice.nutty.obedient.obnoxious.odd.old-fashioned.open.outrageous.outstanding.panicky.perfect.plain.pleasant.poised.poor.powerful.precious.prickly.proud.putrid.puzzled.quaint.real.relieved.repulsive.rich.scary.selfish.shiny.shy.silly.sleepy.smiling.smoggy.sore.sparkling.splendid.spotless.stormy.strange.stupid.successful.super .talented .tame .tasty.tender.tense.terrible.thankful.thoughtful.thoughtless.tired.tough.troubled.ugliest.ugly.uninterested.unsightly.unusual.upset.uptight.vast.victorious.vivacious.wandering.weary.wicked.wide-eyed.wild.witty.worried.worrisome.wrong.zany.zealous';
+var adjs = [];
+var nouns = [];
+
+// if no dot, push string, else get index of next dot, push slice before dot.
+while (aStr.length > 0) {
+  var dot = aStr.indexOf('.');
+  if (dot == -1) {
+    adjs.push(aStr);
+    aStr = '';
+  } else {
+    adjs.push(aStr.slice(0, dot));
+    aStr = aStr.slice(dot + 1);
+  }
+}
+while (nStr.length > 0) {
+  var dot = nStr.indexOf('.');
+  if (dot == -1) {
+    nouns.push(nStr);
+    nStr = '';
+  } else {
+    nouns.push(nStr.slice(0, dot));
+    nStr = nStr.slice(dot + 1);
+  }
+}
+var songNames = [];
+var dups = [];
+var generateName = function generateName() {
+  var mods = ['', 'the ', 'ye ', 'old ', 'new ', 'endless ', 'longest '];
+  var mod = mods[Math.floor(Math.random() * mods.length)];
+  if (Math.random() > 0.7 && (mod == 'the ' || mod == 'ye ')) {
+    mod += mods[2 + Math.floor(Math.random() * 4)];
+  }
+  var name = mod + adjs[Math.floor(Math.random() * adjs.length)] + ' ' + nouns[Math.floor(Math.random() * nouns.length)];
+  if (songNames.indexOf(name) == -1) {
+    songNames.push(name);
+  } else {
+    dups.push(name);
+    return generateName();
+  }
+  return name;
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (generateName);
 
 /***/ }),
 
